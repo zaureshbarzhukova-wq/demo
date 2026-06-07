@@ -1,0 +1,1540 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BioHack Pro — Интегративное здоровье</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0B0F1A;--card:#111827;--card2:#1a2236;--border:#1e2d45;
+  --primary:#00D4FF;--green:#00FF88;--yellow:#FFD600;--red:#FF4757;--purple:#A855F7;--orange:#FF6B35;
+  --text:#E8F0FF;--muted:#5a7099;--muted2:#8aa4c8;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
+/* HEADER */
+header{background:linear-gradient(135deg,#0B0F1A,#0d1b2e);padding:16px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.logo{font-size:20px;font-weight:900;background:linear-gradient(90deg,var(--primary),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header-sub{font-size:11px;color:var(--muted2);margin-top:2px}
+
+/* NAV */
+nav{display:flex;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:0 0 auto;padding:13px 16px;background:none;border:none;color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+nav button.active{color:var(--primary);border-bottom-color:var(--primary)}
+nav button:hover{color:var(--text)}
+
+main{max-width:860px;margin:0 auto;padding:20px 14px 60px}
+.tab{display:none}.tab.active{display:block}
+
+/* CARDS */
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;margin-bottom:14px}
+.card-title{font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.section-label{font-size:11px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin:20px 0 10px;font-weight:700}
+
+/* TAGS */
+.tag{font-size:10px;padding:2px 7px;border-radius:8px;font-weight:700;white-space:nowrap}
+.tag-green{background:rgba(0,255,136,.12);color:var(--green)}
+.tag-yellow{background:rgba(255,214,0,.12);color:var(--yellow)}
+.tag-red{background:rgba(255,71,87,.12);color:var(--red)}
+.tag-blue{background:rgba(0,212,255,.12);color:var(--primary)}
+.tag-purple{background:rgba(168,85,247,.12);color:var(--purple)}
+
+/* GRID */
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+/* INPUTS */
+input[type=number],input[type=text],select,textarea{
+  background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:8px;
+  padding:9px 12px;color:var(--text);font-size:14px;width:100%;transition:border .2s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary)}
+select option{background:#111827;color:var(--text)}
+label{font-size:12px;color:var(--muted2);margin-bottom:4px;display:block}
+
+/* BUTTONS */
+.btn{padding:10px 18px;border-radius:9px;border:none;cursor:pointer;font-size:13px;font-weight:700;transition:opacity .2s}
+.btn:hover{opacity:.85}
+.btn-primary{background:var(--primary);color:#000}
+.btn-green{background:var(--green);color:#000}
+.btn-purple{background:var(--purple);color:#fff}
+.btn-full{width:100%;padding:12px}
+
+/* PROGRESS */
+.prog-row{margin-bottom:10px}
+.prog-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted2);margin-bottom:4px}
+.prog-bar{height:7px;background:var(--border);border-radius:6px;overflow:hidden}
+.prog-fill{height:100%;border-radius:6px;transition:width .5s}
+
+/* BLOOD TEST */
+.marker-group{margin-bottom:20px}
+.marker-group-title{font-size:13px;font-weight:700;color:var(--primary);margin-bottom:10px;padding-bottom:6px;border-bottom:1px solid var(--border)}
+.marker-row{display:grid;grid-template-columns:1fr 90px 1fr;gap:8px;align-items:end;margin-bottom:8px}
+.marker-name{font-size:13px;font-weight:600;padding-top:4px}
+.marker-unit{font-size:11px;color:var(--muted);margin-top:3px}
+.marker-status{padding:8px 10px;border-radius:8px;font-size:12px;font-weight:600;text-align:center;min-height:38px;display:flex;align-items:center;justify-content:center}
+.status-opt{background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.2)}
+.status-low{background:rgba(0,212,255,.1);color:var(--primary);border:1px solid rgba(0,212,255,.2)}
+.status-high{background:rgba(255,71,87,.1);color:var(--red);border:1px solid rgba(255,71,87,.2)}
+.status-border{background:rgba(255,214,0,.1);color:var(--yellow);border:1px solid rgba(255,214,0,.2)}
+.status-empty{background:rgba(255,255,255,.03);color:var(--muted);border:1px solid var(--border)}
+
+/* RECOMMENDATIONS */
+.rec-card{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:10px}
+.rec-title{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.rec-item{font-size:13px;line-height:1.7;color:var(--muted2);padding-left:14px;position:relative}
+.rec-item::before{content:'→';position:absolute;left:0;color:var(--primary)}
+
+/* PROTOCOL */
+.protocol-time{display:flex;gap:10px;margin-bottom:8px}
+.time-badge{background:linear-gradient(135deg,var(--primary),var(--purple));color:#000;font-size:11px;font-weight:800;padding:4px 10px;border-radius:10px;white-space:nowrap;align-self:flex-start;margin-top:2px}
+.protocol-items{flex:1}
+.p-item{font-size:13px;line-height:1.7;color:var(--muted2);padding-left:14px;position:relative}
+.p-item::before{content:'◆';position:absolute;left:0;color:var(--green);font-size:8px;top:4px}
+.p-item strong{color:var(--text)}
+
+/* SUPPLEMENT TABLE */
+.supp-table{width:100%;border-collapse:collapse;font-size:13px}
+.supp-table th{text-align:left;padding:8px 10px;font-size:11px;color:var(--muted);font-weight:700;text-transform:uppercase;border-bottom:1px solid var(--border)}
+.supp-table td{padding:9px 10px;border-bottom:1px solid rgba(30,45,69,.5);vertical-align:top;line-height:1.5}
+.supp-table tr:last-child td{border-bottom:none}
+.supp-table tr:hover td{background:rgba(255,255,255,.02)}
+
+/* CHECKLIST */
+.check-item{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:1px solid rgba(30,45,69,.5)}
+.check-item:last-child{border-bottom:none}
+.chk{width:20px;height:20px;border-radius:5px;border:2px solid var(--border);cursor:pointer;flex-shrink:0;display:flex;align-items:center;justify-content:center;margin-top:1px;transition:all .2s}
+.chk.on{background:var(--green);border-color:var(--green)}
+.chk.on::after{content:'✓';color:#000;font-size:12px;font-weight:900}
+.check-text{font-size:13px;line-height:1.5;color:var(--muted2)}
+.check-text strong{color:var(--text)}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green);color:#000;padding:11px 22px;border-radius:20px;font-weight:700;font-size:13px;transition:transform .3s;z-index:999}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+/* SCORE */
+.score-circle{width:90px;height:90px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;border:3px solid;margin:0 auto 12px}
+.score-num{font-size:28px;font-weight:900}
+.score-lbl{font-size:10px;color:var(--muted2)}
+
+/* ACCORDION */
+.accordion-header{display:flex;justify-content:space-between;align-items:center;cursor:pointer;padding:12px 0;border-bottom:1px solid var(--border);user-select:none}
+.accordion-header:hover .acc-title{color:var(--primary)}
+.acc-title{font-size:14px;font-weight:700;transition:color .2s}
+.acc-arrow{color:var(--muted);transition:transform .2s}
+.acc-arrow.open{transform:rotate(180deg)}
+.accordion-body{display:none;padding-top:12px}
+.accordion-body.open{display:block}
+
+/* FOOD PLATE */
+.plate-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.plate-item{background:var(--card2);border:1px solid var(--border);border-radius:10px;padding:12px}
+.plate-emoji{font-size:22px;margin-bottom:6px}
+.plate-name{font-size:13px;font-weight:700;margin-bottom:4px}
+.plate-desc{font-size:11px;color:var(--muted2);line-height:1.4}
+
+/* TIMER */
+.timer-display{font-size:48px;font-weight:900;text-align:center;color:var(--primary);letter-spacing:2px;margin:16px 0}
+.timer-btns{display:flex;gap:10px;justify-content:center}
+
+@media(max-width:500px){
+  .grid2{grid-template-columns:1fr}
+  .grid3{grid-template-columns:1fr 1fr}
+  .marker-row{grid-template-columns:1fr 70px}
+  .marker-status{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <div class="logo">⚡ BioHack Pro</div>
+    <div class="header-sub">Интегративная медицина · Персональный протокол</div>
+  </div>
+  <div id="healthScore" style="text-align:center">
+    <div style="font-size:22px;font-weight:900;color:var(--green)" id="scoreNum">—</div>
+    <div style="font-size:10px;color:var(--muted)">Health Score</div>
+  </div>
+</header>
+
+<nav>
+  <button class="active" onclick="showTab('protocol')">🌅 Протокол</button>
+  <button onclick="showTab('labs')">🔬 Анализы</button>
+  <button onclick="showTab('supps')">💊 Добавки</button>
+  <button onclick="showTab('food')">🥗 Питание</button>
+  <button onclick="showTab('workout')">💪 Тренировки</button>
+  <button onclick="showTab('procedures')">🧊 Процедуры</button>
+  <button onclick="showTab('checklist')">✅ Чеклист</button>
+</nav>
+
+<main>
+
+<!-- ═══════════════════════════════════════════ PROTOCOL -->
+<div class="tab active" id="tab-protocol">
+
+  <div class="card" style="background:linear-gradient(135deg,rgba(0,212,255,.08),rgba(168,85,247,.08));border-color:rgba(0,212,255,.2)">
+    <div class="card-title">⚡ Ваш ежедневный биохакинг-протокол</div>
+    <p style="font-size:13px;color:var(--muted2);line-height:1.6">Основан на протоколах Питера Аттиа, Эндрю Губермана, Марка Хаймана, Дэвида Синклера и Фила Стэнфорда. Циркадный ритм — основа долголетия.</p>
+  </div>
+
+  <div class="section-label">🌅 Утро (6:00–9:00)</div>
+  <div class="card">
+    <div class="protocol-time">
+      <div class="time-badge">6:00</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Световой сигнал</strong> — выйдите на улицу или смотрите на яркий свет 5–10 мин. Запускает циркадные часы, кортизол, дофамин</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">6:15</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Гидратация</strong> — 500 мл воды + щепотка гималайской соли + сок ½ лимона. Восстанавливает электролиты после сна</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">6:30</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Холодный душ</strong> — 2–3 мин холодной воды. +200–300% норэпинефрин, улучшает настроение на 3–4 часа</div>
+        <div class="p-item"><strong>Или контрастный</strong> — 3 цикла горячий/холодный (20 сек/10 сек)</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">6:45</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Дыхание</strong> — 4-7-8 или физиологический вздох (2 вдоха носом + выдох ртом). Снижает кортизол</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">7:00</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Утренние добавки</strong> — Витамин D3+K2, Омега-3, Магний (если не вечером), NMN/Ресвератрол (натощак)</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">7:30</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Кофе</strong> — не ранее 90 мин после пробуждения (дать кортизолу отработать). Идеально 9:30–10:00</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">8:00</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Завтрак (опционально)</strong> — если не практикуете ИФ. Белок + жиры + минимум углеводов</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">☀️ День (10:00–17:00)</div>
+  <div class="card">
+    <div class="protocol-time">
+      <div class="time-badge">10:00</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Пик когнитивной работы</strong> — самые важные задачи. Максимальный фокус 90–120 мин без телефона</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">12:00</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Обед (начало окна питания)</strong> — противовоспалительные жиры, белок, клетчатка. Без простых сахаров</div>
+        <div class="p-item"><strong>Прогулка 10–15 мин</strong> после еды — снижает постпрандиальный сахар на 30%</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">13:00</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>NSDR / Йога-нидра</strong> — 20 мин (или нет-стресс депрессивный отдых). Восстанавливает дофамин</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">15:00</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Тренировка</strong> — оптимальное окно для силы и выносливости. Температура тела и тестостерон на пике</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🌙 Вечер (18:00–22:30)</div>
+  <div class="card">
+    <div class="protocol-time">
+      <div class="time-badge">18:00</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Последний приём пищи</strong> — идеально 18:00–20:00. Конец 8-часового окна питания</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">19:00</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Вечерние добавки</strong> — Магний глицинат (400 мг), Ашваганда, L-теанин, Мелатонин 0.3–1 мг (если нужно)</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">20:00</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Снизить свет</strong> — тёплый свет, убрать верхнее освещение. Синий свет блокирует мелатонин</div>
+        <div class="p-item"><strong>Сауна</strong> — 15–20 мин при 80–90°C. Повышает ГР, снижает кортизол</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">21:30</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Экраны долой</strong> — очки блокирующие синий свет или режим ночного экрана</div>
+        <div class="p-item"><strong>Температура в спальне</strong> — 18–20°C. Критично для глубокого сна и ГР</div>
+      </div>
+    </div>
+    <div class="protocol-time">
+      <div class="time-badge">22:00</div>
+      <div class="protocol-items">
+        <div class="p-item"><strong>Сон</strong> — 7–9 часов. НЕЛЬЗЯ жертвовать сном — это фундамент всего биохакинга</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ LABS -->
+<div class="tab" id="tab-labs">
+  <div class="card" style="border-color:rgba(0,212,255,.2)">
+    <div class="card-title">🔬 Анализатор крови — Интегративные нормы</div>
+    <p style="font-size:12px;color:var(--muted2);margin-bottom:14px">Интегративная медицина использует <strong>оптимальные</strong> диапазоны (не просто «в норме»). Введите ваши значения — получите рекомендации по добавкам.</p>
+    <p style="font-size:11px;color:var(--yellow)">⚠️ Инструмент носит образовательный характер. Консультируйтесь с врачом.</p>
+  </div>
+
+  <!-- ВИТАМИНЫ -->
+  <div class="marker-group">
+    <div class="marker-group-title">☀️ Витамины и минералы</div>
+
+    <div class="marker-row">
+      <div><div class="marker-name">Витамин D (25-OH)</div><div class="marker-unit">нг/мл</div></div>
+      <input type="number" id="m_vitd" placeholder="напр. 35" step="0.1" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_vitd">—</div>
+    </div>
+    <div class="marker-row">
+      <div><div class="marker-name">Витамин B12</div><div class="marker-unit">пг/мл</div></div>
+      <input type="number" id="m_b12" placeholder="напр. 350" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_b12">—</div>
+    </div>
+    <div class="marker-row">
+      <div><div class="marker-name">Фолат (B9)</div><div class="marker-unit">нг/мл</div></div>
+      <input type="number" id="m_folat" placeholder="напр. 8" step="0.1" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_folat">—</div>
+    </div>
+    <div class="marker-row">
+      <div><div class="marker-name">Ферритин</div><div class="marker-unit">нг/мл</div></div>
+      <input type="number" id="m_ferr" placeholder="напр. 45" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_ferr">—</div>
+    </div>
+    <div class="marker-row">
+      <div><div class="marker-name">Магний (сывор.)</div><div class="marker-unit">ммоль/л</div></div>
+      <input type="number" id="m_mg" placeholder="напр. 0.85" step="0.01" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_mg">—</div>
+    </div>
+    <div class="marker-row">
+      <div><div class="marker-name">Цинк</div><div class="marker-unit">мкмоль/л</div></div>
+      <input type="number" id="m_zn" placeholder="напр. 12" step="0.1" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_zn">—</div>
+    </div>
+  </div>
+
+  <!-- МЕТАБОЛИЗМ -->
+  <div class="marker-group">
+    <div class="marker-group-title">🩸 Метаболизм и воспаление</div>
+
+    <div class="marker-row">
+      <div><div class="marker-name">Глюкоза натощак</div><div class="marker-unit">ммоль/л</div></div>
+      <input type="number" id="m_gluc" placeholder="напр. 5.2" step="0.01" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_gluc">—</div>
+    </div>
+    <div class="marker-row">
+      <div><div class="marker-name">Инсулин натощак</div><div class="marker-unit">мкЕд/мл</div></div>
+      <input type="number" id="m_ins" placeholder="напр. 8" step="0.1" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_ins">—</div>
+    </div>
+    <div class="marker-row">
+      <div><div class="marker-name">HbA1c</div><div class="marker-unit">%</div></div>
+      <input type="number" id="m_hba1c" placeholder="напр. 5.4" step="0.1" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_hba1c">—</div>
+    </div>
+    <div class="marker-row">
+      <div><div class="marker-name">hsCRP (вч-СРБ)</div><div class="marker-unit">мг/л</div></div>
+      <input type="number" id="m_crp" placeholder="напр. 1.2" step="0.01" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_crp">—</div>
+    </div>
+    <div class="marker-row">
+      <div><div class="marker-name">Гомоцистеин</div><div class="marker-unit">мкмоль/л</div></div>
+      <input type="number" id="m_hcy" placeholder="напр. 9" step="0.1" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_hcy">—</div>
+    </div>
+  </div>
+
+  <!-- ГОРМОНЫ -->
+  <div class="marker-group">
+    <div class="marker-group-title">⚡ Щитовидная железа и гормоны</div>
+
+    <div class="marker-row">
+      <div><div class="marker-name">ТТГ</div><div class="marker-unit">мкМЕ/мл</div></div>
+      <input type="number" id="m_tsh" placeholder="напр. 2.8" step="0.01" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_tsh">—</div>
+    </div>
+    <div class="marker-row">
+      <div><div class="marker-name">Свободный Т4</div><div class="marker-unit">пмоль/л</div></div>
+      <input type="number" id="m_t4" placeholder="напр. 14" step="0.1" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_t4">—</div>
+    </div>
+    <div class="marker-row">
+      <div><div class="marker-name">Кортизол (утро)</div><div class="marker-unit">нмоль/л</div></div>
+      <input type="number" id="m_cort" placeholder="напр. 380" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_cort">—</div>
+    </div>
+  </div>
+
+  <!-- ЛИПИДЫ -->
+  <div class="marker-group">
+    <div class="marker-group-title">❤️ Липидный профиль</div>
+    <div class="marker-row">
+      <div><div class="marker-name">ЛПНП (LDL)</div><div class="marker-unit">ммоль/л</div></div>
+      <input type="number" id="m_ldl" placeholder="напр. 3.2" step="0.01" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_ldl">—</div>
+    </div>
+    <div class="marker-row">
+      <div><div class="marker-name">Триглицериды</div><div class="marker-unit">ммоль/л</div></div>
+      <input type="number" id="m_tg" placeholder="напр. 1.4" step="0.01" oninput="analyzeAll()">
+      <div class="marker-status status-empty" id="s_tg">—</div>
+    </div>
+  </div>
+
+  <button class="btn btn-primary btn-full" onclick="showLabRecs()">🧠 Получить персональные рекомендации</button>
+
+  <div id="labRecs" style="margin-top:16px;display:none"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════ SUPPLEMENTS -->
+<div class="tab" id="tab-supps">
+
+  <div class="card">
+    <div class="card-title">💊 Мастер-таблица добавок — интегративный подход</div>
+    <p style="font-size:12px;color:var(--muted2)">Дозировки — для взрослого при дефиците. Поддерживающие дозы — вдвое меньше. Принимайте с едой (жирорастворимые — с жирами).</p>
+  </div>
+
+  <div class="section-label">🌟 Фундаментальные — всем</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="supp-table">
+      <tr><th>Добавка</th><th>Доза</th><th>Время</th><th>Форма / Заметки</th></tr>
+      <tr><td><strong>Витамин D3</strong></td><td>4000–8000 МЕ</td><td>🌅 Утро с едой</td><td>Всегда с K2 (МК-7, 100–200 мкг). Контроль через 3 мес. Цель: 60–80 нг/мл</td></tr>
+      <tr><td><strong>Витамин K2</strong></td><td>100–200 мкг</td><td>🌅 Утро с едой</td><td>МК-7 (менахинон). Направляет кальций в кости, не сосуды</td></tr>
+      <tr><td><strong>Омега-3</strong></td><td>2–4 г EPA+DHA</td><td>🌅/☀️ С едой</td><td>Триглицеридная форма. Хранить в холодильнике. Цель Омега-3 индекс >8%</td></tr>
+      <tr><td><strong>Магний глицинат</strong></td><td>300–400 мг</td><td>🌙 Вечер</td><td>Лучшая форма для сна и стресса. Малат — утром (энергия). Не оксид!</td></tr>
+    </table>
+  </div>
+
+  <div class="section-label">⚡ Энергия и митохондрии</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="supp-table">
+      <tr><th>Добавка</th><th>Доза</th><th>Время</th><th>Механизм</th></tr>
+      <tr><td><strong>Коэнзим Q10</strong></td><td>200–300 мг</td><td>🌅 Утро с жирами</td><td>Убихинол (активная форма после 35 лет). Производство АТФ, антиоксидант</td></tr>
+      <tr><td><strong>NMN или NR</strong></td><td>250–500 мг</td><td>🌅 Натощак</td><td>Предшественник NAD+. Активирует сиртуины — гены долголетия. Синклер протокол</td></tr>
+      <tr><td><strong>Ресвератрол</strong></td><td>500 мг</td><td>🌅 С жирами</td><td>Активирует SIRT1. Принимать вместе с NMN. Не с едой, богатой антиоксидантами</td></tr>
+      <tr><td><strong>Альфа-липоевая к-та</strong></td><td>300–600 мг</td><td>☀️ Между едой</td><td>Универсальный антиоксидант. Улучшает чувствительность к инсулину</td></tr>
+      <tr><td><strong>Витамин B-комплекс</strong></td><td>1 капс.</td><td>🌅 С завтраком</td><td>Метилированные формы (метилкобаламин B12, метилфолат). Не цианокобаламин!</td></tr>
+    </table>
+  </div>
+
+  <div class="section-label">🧠 Мозг и нейропластичность</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="supp-table">
+      <tr><th>Добавка</th><th>Доза</th><th>Время</th><th>Эффект</th></tr>
+      <tr><td><strong>Лион Мане (ежовик)</strong></td><td>500–1000 мг</td><td>🌅 Утро</td><td>Стимулирует NGF — нейрогенез. Улучшает память и концентрацию</td></tr>
+      <tr><td><strong>Фосфатидилсерин</strong></td><td>100–200 мг</td><td>☀️ Обед</td><td>Поддерживает мембраны нейронов, снижает кортизол</td></tr>
+      <tr><td><strong>L-теанин</strong></td><td>100–200 мг</td><td>🌙 Вечер</td><td>Альфа-волны мозга. Синергия с кофеином для спокойного фокуса (2:1 к кофеину)</td></tr>
+      <tr><td><strong>Глицин</strong></td><td>3–5 г</td><td>🌙 Перед сном</td><td>Снижает температуру тела → глубокий сон. Нейротрансмиттер</td></tr>
+    </table>
+  </div>
+
+  <div class="section-label">💪 Тело, мышцы, суставы</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="supp-table">
+      <tr><th>Добавка</th><th>Доза</th><th>Время</th><th>Для чего</th></tr>
+      <tr><td><strong>Креатин моногидрат</strong></td><td>3–5 г</td><td>Любое (ежедневно)</td><td>Сила, мышечная масса, когнитивная функция. Одна из самых изученных добавок</td></tr>
+      <tr><td><strong>Коллаген (тип 1 и 3)</strong></td><td>10–15 г</td><td>☀️ За 1 ч до тренировки</td><td>С Витамином С (500 мг). Суставы, кожа, связки</td></tr>
+      <tr><td><strong>Куркумин + пиперин</strong></td><td>500–1000 мг</td><td>☀️ С едой</td><td>Мощный противовоспалительный. Снижает hsCRP. Биоперин увеличивает усвоение ×20</td></tr>
+      <tr><td><strong>Берберин</strong></td><td>500 мг ×2</td><td>☀️/🌙 С едой</td><td>Регулирует сахар (как метформин). Активирует AMPK. При высоком инсулине/глюкозе</td></tr>
+    </table>
+  </div>
+
+  <div class="section-label">😴 Сон и стресс</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="supp-table">
+      <tr><th>Добавка</th><th>Доза</th><th>Время</th><th>Механизм</th></tr>
+      <tr><td><strong>Ашваганда (KSM-66)</strong></td><td>300–600 мг</td><td>🌙 Вечер</td><td>Снижает кортизол до 30%. Адаптоген. Курс 2–3 месяца, перерыв 1 мес</td></tr>
+      <tr><td><strong>Мелатонин</strong></td><td>0.3–1 мг</td><td>🌙 За 30–60 мин до сна</td><td>Малые дозы эффективнее! Не вызывает зависимость при правильном применении</td></tr>
+      <tr><td><strong>Родиола розовая</strong></td><td>200–400 мг</td><td>🌅 Натощак</td><td>Снижает усталость, стресс-устойчивость. Не принимать вечером!</td></tr>
+      <tr><td><strong>Магний треонат</strong></td><td>1–2 г (145 мг Mg)</td><td>🌙 Перед сном</td><td>Проникает через ГЭБ. Улучшает качество сна и синаптическую пластичность</td></tr>
+    </table>
+  </div>
+
+  <div class="card" style="background:rgba(255,214,0,.05);border-color:rgba(255,214,0,.2)">
+    <div class="card-title">⚠️ Важные правила приёма</div>
+    <div style="font-size:13px;line-height:1.9;color:var(--muted2)">
+      🔹 <strong>Не принимайте всё сразу</strong> — начинайте по 1–2 новых добавки в неделю<br>
+      🔹 <strong>Жирорастворимые</strong> (D, K, омега, CoQ10, куркумин) — только с жирами<br>
+      🔹 <strong>Кальций и железо</strong> — не вместе с цинком, магнием, омега-3<br>
+      🔹 <strong>Контроль анализов</strong> через 3 месяца после начала приёма<br>
+      🔹 <strong>При беременности</strong>, хронических заболеваниях — только с врачом
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ FOOD -->
+<div class="tab" id="tab-food">
+
+  <div class="card">
+    <div class="card-title">🥗 Противовоспалительное питание — принципы интегративной медицины</div>
+    <p style="font-size:13px;color:var(--muted2);line-height:1.6">Цель — снизить инсулин, воспаление, окислительный стресс. Питание ≈ 80% результата.</p>
+  </div>
+
+  <div class="section-label">🟢 Ешьте свободно</div>
+  <div class="plate-grid">
+    <div class="plate-item"><div class="plate-emoji">🐟</div><div class="plate-name">Жирная рыба</div><div class="plate-desc">Лосось, скумбрия, сардины. 3–4 раза/нед. Омега-3, витамин D, B12</div></div>
+    <div class="plate-item"><div class="plate-emoji">🥦</div><div class="plate-name">Крестоцветные</div><div class="plate-desc">Брокколи, цветная капуста, брюссельская. Сульфорафан — мощный детокс</div></div>
+    <div class="plate-item"><div class="plate-emoji">🫐</div><div class="plate-name">Ягоды</div><div class="plate-desc">Черника, голубика, клубника. Антиоксиданты, антоцианы, низкий ГИ</div></div>
+    <div class="plate-item"><div class="plate-emoji">🥑</div><div class="plate-name">Авокадо</div><div class="plate-desc">Мононенасыщенные жиры, К, фолат. 1 авокадо снижает ЛПНП</div></div>
+    <div class="plate-item"><div class="plate-emoji">🥚</div><div class="plate-name">Яйца</div><div class="plate-desc">Холин, B12, лютеин. 2–4 в день — не влияют на холестерин у большинства</div></div>
+    <div class="plate-item"><div class="plate-emoji">🫒</div><div class="plate-name">Оливковое масло</div><div class="plate-desc">Extra virgin cold-pressed. Олеокантал = натуральный ибупрофен</div></div>
+    <div class="plate-item"><div class="plate-emoji">🥬</div><div class="plate-name">Листовая зелень</div><div class="plate-desc">Шпинат, руккола, мангольд. Магний, фолат, нитраты → NO</div></div>
+    <div class="plate-item"><div class="plate-emoji">🫘</div><div class="plate-name">Бобовые</div><div class="plate-desc">Чечевица, нут, фасоль. Клетчатка, резистентный крахмал, белок</div></div>
+  </div>
+
+  <div class="section-label">🟡 Умеренно (1–2 раза/нед)</div>
+  <div class="card">
+    <div style="font-size:13px;line-height:1.9;color:var(--muted2)">
+      🍫 <strong>Горький шоколад</strong> 85%+ — флавоноиды, магний, улучшает NO (1–2 кусочка)<br>
+      🍷 <strong>Красное вино сухое</strong> — ресвератрол. Не более 1 бокала, не регулярно<br>
+      🍚 <strong>Бурый рис, киноа</strong> — сложные углеводы, в умеренных количествах<br>
+      🥩 <strong>Красное мясо</strong> — травяного откорма, не обугленное. Источник B12, цинка, железа<br>
+      🍌 <strong>Бананы, манго</strong> — фруктоза, высокий ГИ — лучше после тренировки
+    </div>
+  </div>
+
+  <div class="section-label">🔴 Избегайте / минимизируйте</div>
+  <div class="card" style="border-color:rgba(255,71,87,.2)">
+    <div style="font-size:13px;line-height:1.9;color:var(--muted2)">
+      ❌ <strong>Растительные масла омега-6</strong> — подсолнечное, кукурузное, соевое. Провоцируют воспаление<br>
+      ❌ <strong>Сахар и фруктоза</strong> — газировки, соки, сладости. HFCS — хуже всего<br>
+      ❌ <strong>Ультрапереработанная еда</strong> — эмульгаторы разрушают микробиом<br>
+      ❌ <strong>Трансжиры</strong> — маргарин, фастфуд, промышленная выпечка<br>
+      ❌ <strong>Рафинированные углеводы</strong> — белый хлеб, паста, белый рис (часто)<br>
+      ❌ <strong>Алкоголь регулярно</strong> — нарушает сон, повышает кортизол, разрушает NAD+
+    </div>
+  </div>
+
+  <div class="section-label">⏰ Протоколы питания</div>
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">⏱️ Интервальное голодание (ИФ 16:8)</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.8;color:var(--muted2)">
+        <strong style="color:var(--text)">Схема:</strong> 8 часов еды, 16 часов голодания.<br>
+        Пример: первый приём в 12:00, последний в 20:00.<br><br>
+        <strong style="color:var(--green)">Что происходит в окне голодания:</strong><br>
+        → 12–14 ч: активируется аутофагия (очищение клеток)<br>
+        → 16 ч: пик аутофагии, снижение инсулина, жиросжигание<br>
+        → 18–24 ч: повышается ГР до 1300% (у женщин) и 2000% (у мужчин)<br><br>
+        <strong style="color:var(--yellow)">Разрешено в окне голодания:</strong> вода, чёрный кофе, несладкий чай, электролиты без калорий
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">🌿 Циркадное питание</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.8;color:var(--muted2)">
+        Инсулиновая чувствительность максимальна утром, минимальна вечером.<br><br>
+        → Самый большой приём пищи — <strong style="color:var(--text)">до 14:00</strong><br>
+        → Углеводы преимущественно — <strong style="color:var(--text)">в первой половине дня</strong><br>
+        → Ужин — лёгкий, белково-жировой, не позже 19:00–20:00<br>
+        → Не есть за 3 часа до сна — иначе блокируется ГР и нарушается сон<br><br>
+        Исследование Сатчидананды Панды: питание в ограниченном окне снижает вес, воспаление, давление даже без изменения калоража.
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">🧫 Здоровье кишечника — основа иммунитета</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.8;color:var(--muted2)">
+        70% иммунной системы — в кишечнике. 95% серотонина производится там же.<br><br>
+        <strong style="color:var(--text)">Для микробиома:</strong><br>
+        → Клетчатка 30–40 г/день (30 разных растений в неделю)<br>
+        → Ферментированные продукты: кефир, квашеная капуста, кимчи, мисо<br>
+        → Пробиотики: Lactobacillus rhamnosus, Bifidobacterium longum<br>
+        → Пребиотики: инулин, FOS — цикорий, лук, чеснок, топинамбур<br><br>
+        <strong style="color:var(--red)">Убивает микробиом:</strong> антибиотики, ИПП, НПВС, сахар, алкоголь, стресс
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ WORKOUT -->
+<div class="tab" id="tab-workout">
+
+  <div class="card">
+    <div class="card-title">💪 Тренировки по науке о долголетии</div>
+    <p style="font-size:13px;color:var(--muted2);line-height:1.6">Питер Аттиа: мышечная масса — главный предиктор долголетия. Кардиореспираторная подготовка (VO2 max) снижает смертность в 4–5 раз сильнее, чем отказ от курения.</p>
+  </div>
+
+  <div class="section-label">❤️ Зона 2 — основа (80% тренировок)</div>
+  <div class="card">
+    <div style="background:rgba(0,255,136,.05);border:1px solid rgba(0,255,136,.15);border-radius:10px;padding:14px;margin-bottom:12px">
+      <div style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:6px">Что такое Зона 2?</div>
+      <div style="font-size:13px;color:var(--muted2);line-height:1.7">Низкая интенсивность — можно поддерживать разговор. ЧСС = 60–75% от максимума. Максимум митохондриального биогенеза. Сжигает жир, не гликоген.</div>
+    </div>
+    <div style="font-size:13px;line-height:1.9;color:var(--muted2)">
+      📌 <strong>Как определить Зону 2:</strong> тест разговора — вы говорите фразами, но с усилием<br>
+      📌 <strong>Норма:</strong> 150–180 минут в неделю (3–4 сессии по 45 мин)<br>
+      📌 <strong>Примеры:</strong> быстрая ходьба, лёгкий бег, велосипед, эллипс, гребля<br>
+      📌 <strong>Эффект через 3 месяца:</strong> VO2 max +15–20%, жиросжигание +40%
+    </div>
+
+    <div style="margin-top:14px">
+      <div style="font-size:13px;font-weight:700;margin-bottom:8px">🧮 Ваша ЧСС для Зоны 2</div>
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <div style="flex:1"><label>Ваш возраст</label><input type="number" id="ageInput" placeholder="напр. 32" min="15" max="80"></div>
+        <button class="btn btn-green" onclick="calcZone2()">Рассчитать</button>
+      </div>
+      <div id="zone2Result" style="margin-top:10px;display:none;padding:12px;background:rgba(0,255,136,.08);border-radius:8px;font-size:13px;line-height:1.7"></div>
+    </div>
+  </div>
+
+  <div class="section-label">💥 VO2 Max — интервалы (20% тренировок)</div>
+  <div class="card">
+    <div style="font-size:13px;line-height:1.9;color:var(--muted2)">
+      Протокол <strong style="color:var(--text)">Norwegian 4×4</strong> — научно доказан:<br>
+      → Разминка 10 мин в Зоне 2<br>
+      → 4 интервала по 4 мин на 90–95% ЧСС макс<br>
+      → Отдых 3 мин между интервалами (активный, Зона 1)<br>
+      → Заминка 5 мин<br><br>
+      Достаточно <strong style="color:var(--green)">1–2 раза в неделю</strong>. Больше — повышает кортизол.
+    </div>
+  </div>
+
+  <div class="section-label">🏋️ Силовые тренировки</div>
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">📋 Принципы силовых по долголетию</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.9;color:var(--muted2)">
+        → <strong>Цель</strong> — мышечная масса и сила. Саркопения (потеря мышц) с 35 лет — 1–2%/год без тренировок<br>
+        → <strong>Частота</strong> — 2–3 силовых в неделю. Каждая мышечная группа 2× в неделю<br>
+        → <strong>Приоритет</strong> — базовые движения: приседания, становая, жим, тяга, отжимания<br>
+        → <strong>Прогрессия</strong> — увеличивайте вес или повторения каждые 1–2 недели<br>
+        → <strong>Повторения</strong> — 6–12 (гипертрофия), 1–5 (сила). Последние 2–3 повторения — до отказа<br>
+        → <strong>Темп</strong> — 2 сек вниз, 1 сек пауза, 1 сек вверх. Эксцентрика = главный стимул<br>
+        → <strong>Белок до/после</strong> — 0.4 г/кг за 2 часа до и после тренировки
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">🧘 Мобильность и гибкость</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.9;color:var(--muted2)">
+        → 10–15 мин ежедневно — важнее часовой растяжки раз в неделю<br>
+        → Приоритет: тазобедренный сустав, грудной отдел, плечи, лодыжки<br>
+        → <strong>Статическая растяжка</strong> — только после тренировки или отдельно. Удержание 45–60 сек<br>
+        → <strong>Динамическая</strong> — разминка перед тренировкой<br>
+        → <strong>Йога или пилатес</strong> — 1–2 раза в неделю. Снижают кортизол, улучшают ось тело-мозг
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">📊 Недельный план</div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <table class="supp-table">
+      <tr><th>День</th><th>Тренировка</th><th>Длительность</th></tr>
+      <tr><td><strong>Пн</strong></td><td>Зона 2 кардио</td><td>45–60 мин</td></tr>
+      <tr><td><strong>Вт</strong></td><td>Силовая верх тела</td><td>45–60 мин</td></tr>
+      <tr><td><strong>Ср</strong></td><td>Зона 2 + Мобильность</td><td>30+15 мин</td></tr>
+      <tr><td><strong>Чт</strong></td><td>Силовая низ тела</td><td>45–60 мин</td></tr>
+      <tr><td><strong>Пт</strong></td><td>VO2 max интервалы</td><td>40 мин</td></tr>
+      <tr><td><strong>Сб</strong></td><td>Долгая прогулка / хайкинг</td><td>60–120 мин</td></tr>
+      <tr><td><strong>Вс</strong></td><td>Восстановление / Йога</td><td>20–30 мин</td></tr>
+    </table>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ PROCEDURES -->
+<div class="tab" id="tab-procedures">
+
+  <div class="card">
+    <div class="card-title">🧊 Биохакинг-процедуры — протоколы</div>
+    <p style="font-size:13px;color:var(--muted2)">Гормезис — умеренный стресс активирует защитные механизмы организма. Принцип всех процедур.</p>
+  </div>
+
+  <div class="section-label">🧊 Холодовая терапия</div>
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">❄️ Холодный душ / Криотерапия</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.8;color:var(--muted2)">
+        <strong style="color:var(--primary)">Эффекты:</strong> +200–300% норэпинефрин, улучшение настроения, ускорение восстановления, бурый жир активируется<br><br>
+        <strong style="color:var(--text)">Протокол Губермана:</strong><br>
+        → 1–3 мин холодного душа (или ванна 11–15°C)<br>
+        → 11 минут в неделю суммарно — доказанная доза<br>
+        → Идеально ПОСЛЕ силовой для воспаления, НО не сразу (гипертрофия снижается)<br>
+        → Утром = энергия и фокус. Вечером — не рекомендуется (повышает кортизол)<br><br>
+        <strong style="color:var(--yellow)">Начинающим:</strong> тёплый → прохладный → холодный (по 30 сек). Прогресс за 2–3 недели
+      </div>
+      <div style="margin-top:12px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">⏱️ Таймер холодного душа</div>
+        <div class="timer-display" id="coldTimer">02:00</div>
+        <div class="timer-btns">
+          <button class="btn btn-primary" onclick="startTimer('cold',120)">Старт 2 мин</button>
+          <button class="btn" style="background:var(--border);color:var(--text)" onclick="stopTimer()">Стоп</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">🔥 Тепловая терапия</div>
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">🧖 Сауна — протоколы и эффекты</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.8;color:var(--muted2)">
+        <strong style="color:var(--orange)">Исследования:</strong> 4+ сессии/нед снижают сердечно-сосудистую смертность на 50% (Финское исследование, n=2315)<br><br>
+        <strong style="color:var(--text)">Протокол:</strong><br>
+        → Температура 80–100°C, влажность 10–20%<br>
+        → 15–20 мин × 2–3 раунда, охлаждение между раундами<br>
+        → Общее время 45–60 мин<br><br>
+        <strong style="color:var(--green)">Эффекты:</strong><br>
+        → ГР: +1600% (мужчины), +1300% (женщины) после 2 сессий/нед<br>
+        → Белки теплового шока (HSP) — ремонт повреждённых белков<br>
+        → Снижение кортизола, улучшение сна<br>
+        → BDNF → нейрогенез<br>
+        → VO2 max +3.5% (при регулярном применении)
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">💨 Дыхательные практики</div>
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">🌬️ Техники дыхания и когда применять</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.9;color:var(--muted2)">
+        <strong style="color:var(--text)">Физиологический вздох (моментальное снятие стресса):</strong><br>
+        → 2 коротких вдоха носом + длинный выдох ртом. 1–3 раза. Мгновенно снижает тревогу<br><br>
+
+        <strong style="color:var(--text)">4-7-8 (для сна и успокоения):</strong><br>
+        → Вдох 4 сек → задержка 7 сек → выдох 8 сек. 4 цикла перед сном<br><br>
+
+        <strong style="color:var(--text)">Box Breathing — метод SEAL (фокус и контроль):</strong><br>
+        → Вдох 4 → задержка 4 → выдох 4 → задержка 4. 4–6 минут<br><br>
+
+        <strong style="color:var(--text)">Дыхание Вима Хофа (энергия и иммунитет):</strong><br>
+        → 30–40 глубоких вдохов → выдох и задержка до позыва дышать → вдох-задержка 15 сек<br>
+        → 3 раунда. ТОЛЬКО сидя/лёжа! Не за рулём!<br><br>
+
+        <strong style="color:var(--yellow)">⚠️</strong> При гипертонии, беременности — проконсультируйтесь с врачом
+      </div>
+      <div style="margin-top:12px">
+        <div style="font-size:13px;font-weight:700;margin-bottom:8px">⏱️ Таймер Box Breathing</div>
+        <div class="timer-display" id="breathTimer">04:00</div>
+        <div class="timer-btns">
+          <button class="btn btn-purple" onclick="startTimer('breath',240)">Старт 4 мин</button>
+          <button class="btn" style="background:var(--border);color:var(--text)" onclick="stopTimer()">Стоп</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-label">☀️ Световая терапия</div>
+  <div class="card">
+    <div style="font-size:13px;line-height:1.9;color:var(--muted2)">
+      <strong style="color:var(--text)">Утренний свет (критически важен):</strong><br>
+      → Яркость >10 000 люкс снаружи (1000 в пасмурный день). Запускает серотонин и циркадный ритм<br>
+      → 5–10 мин при ясном небе, 20–30 мин в облачный день<br>
+      → Без солнцезащитных очков (для этой цели)<br><br>
+
+      <strong style="color:var(--text)">Красный свет (фотобиомодуляция):</strong><br>
+      → 630–670 нм (красный) и 800–880 нм (ИК)<br>
+      → 5–15 мин на 15–30 см от кожи. Утром или до тренировки<br>
+      → Улучшает митохондриальную функцию (цитохром С оксидаза)<br>
+      → Снижает воспаление, ускоряет восстановление мышц, улучшает кожу<br><br>
+
+      <strong style="color:var(--yellow)">Вечером:</strong> янтарные очки или лампы 1800K. Синий свет (480 нм) блокирует мелатонин на 50%
+    </div>
+  </div>
+
+  <div class="section-label">🧘 Другие протоколы</div>
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">⚡ Заземление (Earthing)</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.8;color:var(--muted2)">
+        Прямой контакт кожи с землёй — 20–30 мин. Снижает маркеры воспаления, нормализует кортизол, улучшает качество сна. Босиком на траве, земле, песке, у воды.
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">🩸 Глубокое голодание (24–72 ч)</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.8;color:var(--muted2)">
+        → 24 ч — мощный аутофагический клиренс<br>
+        → 48–72 ч — пик регенерации стволовых клеток<br>
+        → Только при хорошем самочувствии, не при диабете, беременности<br>
+        → Можно: вода, электролиты, несладкий чай, чёрный кофе<br>
+        → Плавный выход: бульон → лёгкий белок → обычная еда<br>
+        → 1–2 раза в квартал для оздоровительного эффекта
+      </div>
+    </div>
+  </div>
+
+  <!-- HYPEROXYGENATION -->
+  <div class="section-label" style="margin-top:24px">🫁 Гипероксигенотерапия</div>
+
+  <div class="card" style="background:linear-gradient(135deg,rgba(0,212,255,.07),rgba(0,255,136,.05));border-color:rgba(0,212,255,.25)">
+    <div class="card-title" style="font-size:16px">🫧 Что такое гипероксигенотерапия?</div>
+    <p style="font-size:13px;color:var(--muted2);line-height:1.8;margin-bottom:12px">
+      Гипероксигенотерапия — контролируемое насыщение организма кислородом выше атмосферного уровня (21%) через дыхательные протоколы или специальное оборудование. Активирует митохондрии, ускоряет регенерацию, улучшает когнитивную функцию и снижает воспаление.
+    </p>
+    <div class="grid3">
+      <div style="text-align:center;padding:12px;background:rgba(0,212,255,.08);border-radius:10px;border:1px solid rgba(0,212,255,.2)">
+        <div style="font-size:22px;font-weight:900;color:var(--primary)">21%</div>
+        <div style="font-size:11px;color:var(--muted2);margin-top:3px">O₂ в воздухе</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:rgba(0,255,136,.08);border-radius:10px;border:1px solid rgba(0,255,136,.2)">
+        <div style="font-size:22px;font-weight:900;color:var(--green)">40–100%</div>
+        <div style="font-size:11px;color:var(--muted2);margin-top:3px">Гипероксия</div>
+      </div>
+      <div style="text-align:center;padding:12px;background:rgba(168,85,247,.08);border-radius:10px;border:1px solid rgba(168,85,247,.2)">
+        <div style="font-size:22px;font-weight:900;color:var(--purple)">1.4–3 атм</div>
+        <div style="font-size:11px;color:var(--muted2);margin-top:3px">ГБО (камера)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- IHHT -->
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">🔄 ИХГТ — Интервальная гипоксия-гипероксия (IHHT)</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.8;color:var(--muted2);margin-bottom:14px">
+        <strong style="color:var(--primary)">ИХГТ</strong> — чередование пониженного (10–14% O₂) и повышенного (30–40% O₂) кислорода. Применяется в спортивной медицине, кардиологии и программах anti-aging. Разработан в советской/российской спортивной медицине, сейчас широко используется в клиниках Германии, Австрии, Швейцарии.<br><br>
+        <strong style="color:var(--green)">Клинически доказанные эффекты:</strong><br>
+        → Увеличение VO2 max на 5–18% за курс 10–15 сессий<br>
+        → Рост митохондриальной плотности (биогенез митохондрий)<br>
+        → Снижение hsCRP и маркеров воспаления<br>
+        → Улучшение чувствительности к инсулину<br>
+        → Нейрогенез: повышение BDNF и HIF-1α<br>
+        → Восстановление после инфаркта, инсульта, COVID-19 (long-COVID)<br>
+        → Улучшение качества сна через нормализацию ЧСС в покое
+      </div>
+      <div style="background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:10px;padding:14px;margin-bottom:14px">
+        <div style="font-size:13px;font-weight:700;color:var(--text);margin-bottom:10px">📋 Клинический протокол ИХГТ</div>
+        <table class="supp-table">
+          <tr><th>Фаза</th><th>O₂ %</th><th>Длительность</th><th>Эффект</th></tr>
+          <tr><td>🟣 Гипоксия</td><td>10–14%</td><td>4–7 мин</td><td>Включение HIF-1α, EPO, VEGF</td></tr>
+          <tr><td>🔵 Гипероксия</td><td>30–40%</td><td>3–5 мин</td><td>Сверхнасыщение O₂, ATP burst</td></tr>
+          <tr><td>🔁 Циклы</td><td>Чередование</td><td>4–8 циклов</td><td>Тренировка сосудов и митохондрий</td></tr>
+          <tr><td>⏱ Сессия</td><td>—</td><td>40–60 мин</td><td>1 курс = 10–15 сессий (3×/нед)</td></tr>
+        </table>
+      </div>
+      <div style="font-size:12px;color:var(--yellow)">⚠️ Клинический ИХГТ — только на специальном аппарате (Oxytherapy, ReOxy) под контролем врача. Самостоятельно используйте дыхательные протоколы ниже.</div>
+    </div>
+  </div>
+
+  <!-- NORMOBARIC -->
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">💨 Нормобарная гипероксигенотерапия — домашние протоколы</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.8;color:var(--muted2);margin-bottom:12px">
+        <strong style="color:var(--text)">Кислородный концентратор (5–10 л/мин, 90–95% O₂):</strong><br>
+        → Вдыхать через маску 15–30 мин в состоянии покоя<br>
+        → 1 сессия/день курсами по 10–14 дней, перерыв 2 недели<br>
+        → Эффективно при хронической усталости, туман в голове, восстановление после болезни<br><br>
+        <strong style="color:var(--text)">Кислородные коктейли (кислородные бары):</strong><br>
+        → Газирование воды/сока медицинским O₂. Эффект ~15–30 мин<br>
+        → Популярно в Японии и России. Улучшают ЖКТ и системное насыщение<br><br>
+        <strong style="color:var(--text)">Спортивный кислород (баллончики 95%):</strong><br>
+        → 2–3 вдоха до/после тренировки или при остром утомлении<br>
+        → Ускоряет восстановление, снижает накопление лактата
+      </div>
+    </div>
+  </div>
+
+  <!-- HBO -->
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">🫧 ГБО — Гипербарическая оксигенотерапия</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.8;color:var(--muted2);margin-bottom:12px">
+        Дыхание 100% O₂ под повышенным давлением (1.4–3 атм). Протокол Синклера и Шохата (Тель-Авивский университет, 2021): <strong style="color:var(--text)">60 сессий ГБО удлинили теломеры на 20–38% и снизили сенесцентные клетки на 11–37%</strong> — первый документально подтверждённый омолаживающий эффект у людей.<br><br>
+        <strong style="color:var(--green)">Показания (по данным интегративной медицины):</strong><br>
+        → Long-COVID, хроническая усталость, фибромиалгия<br>
+        → Спортивное восстановление (НХЛ, НФЛ — стандарт практики)<br>
+        → Нейродегенерация, черепно-мозговые травмы<br>
+        → Раневое заживление, диабетическая нейропатия<br>
+        → Anti-aging: теломеры, сенесценция, BDNF<br><br>
+        <strong style="color:var(--text)">Протоколы:</strong><br>
+        → <em>Стандартный anti-aging:</em> 1.5–2 атм, 90 мин, 40–60 сессий<br>
+        → <em>Спортивный recovery:</em> 1.3–1.5 атм, 60 мин, 10–20 сессий<br>
+        → <em>Нейро:</em> 1.75–2 атм, 60–90 мин, 40 сессий<br>
+      </div>
+      <div style="font-size:12px;padding:10px;background:rgba(255,71,87,.08);border-radius:8px;border:1px solid rgba(255,71,87,.2);color:var(--muted2)">
+        <strong style="color:var(--red)">Противопоказания ГБО:</strong> клаустрофобия, нелеченный пневмоторакс, высокая лихорадка, некоторые ОРВИ, имплантированные устройства (уточняйте с врачом).
+      </div>
+    </div>
+  </div>
+
+  <!-- DIY BREATHING -->
+  <div class="card">
+    <div class="accordion-header" onclick="toggleAcc(this)">
+      <div class="acc-title">🧘 Дыхательная гипероксигенация — без оборудования</div>
+      <div class="acc-arrow">▾</div>
+    </div>
+    <div class="accordion-body">
+      <div style="font-size:13px;line-height:1.8;color:var(--muted2);margin-bottom:14px">
+        Специальные техники временно повышают SpO₂ до 98–99,9% и насыщают ткани CO₂-сдвинутым кислородом (эффект Бора).<br><br>
+        <strong style="color:var(--primary)">Протокол гипервентиляция + задержка (Вим Хоф / Бутейко-гипер):</strong><br>
+        → 30–40 глубоких мощных вдохов (вдох активный, выдох пассивный)<br>
+        → После последнего выдоха — задержка дыхания (без воздуха) как можно дольше<br>
+        → Вдох и задержка на 15 сек с давлением<br>
+        → 3–4 раунда. Перерыв 1–2 мин между раундами<br>
+        → Эффект: кровь временно суперзаряжена O₂, щелочной сдвиг pH<br><br>
+        <strong style="color:var(--green)">4-7-8 Оксигенирующее (глубокое диафрагмальное):</strong><br>
+        → Медленный глубокий вдох животом 6–7 сек (полное наполнение лёгких)<br>
+        → Задержка 2–3 сек<br>
+        → Медленный выдох 8–10 сек через сжатые губы (создание PEEP)<br>
+        → 10–15 минут. Насыщение O₂ тканей через PEEP-эффект<br><br>
+        <strong style="color:var(--yellow)">Турбо-оксигенация (перед тренировкой):</strong><br>
+        → 20 быстрых глубоких вдохов → нормальное дыхание 1 мин → повторить 3 раза<br>
+        → Повышает SpO₂, подготавливает митохондрии к нагрузке
+      </div>
+      <div style="font-size:12px;padding:10px;background:rgba(255,214,0,.06);border-radius:8px;border:1px solid rgba(255,214,0,.2);color:var(--muted2)">
+        ⚠️ <strong style="color:var(--yellow)">Только сидя или лёжа!</strong> Гипервентиляция может вызвать кратковременное головокружение. Никогда не практикуйте в воде или за рулём.
+      </div>
+    </div>
+  </div>
+
+  <!-- INTERACTIVE PROTOCOL -->
+  <div class="card" style="border-color:rgba(0,212,255,.2)">
+    <div class="card-title">⚡ Интерактивный сеанс гипероксигенации</div>
+    <p style="font-size:12px;color:var(--muted2);margin-bottom:16px">Выберите протокол — таймер проведёт вас через все фазы с голосовыми подсказками.</p>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px" id="oxyProtocolBtns">
+      <button class="btn" style="background:rgba(0,212,255,.15);color:var(--primary);border:1px solid rgba(0,212,255,.3)" onclick="selectOxyProtocol('wimhof')">Вим Хоф / 3 раунда</button>
+      <button class="btn" style="background:rgba(0,255,136,.1);color:var(--green);border:1px solid rgba(0,255,136,.2)" onclick="selectOxyProtocol('deep')">Глубокое диафрагм. / 10 мин</button>
+      <button class="btn" style="background:rgba(168,85,247,.1);color:var(--purple);border:1px solid rgba(168,85,247,.2)" onclick="selectOxyProtocol('turbo')">Турбо перед тренировкой</button>
+    </div>
+
+    <div id="oxyDisplay" style="display:none">
+      <div style="text-align:center;margin-bottom:12px">
+        <div style="font-size:13px;color:var(--muted2);margin-bottom:4px" id="oxyPhaseName">Фаза</div>
+        <div style="font-size:52px;font-weight:900;color:var(--primary);letter-spacing:2px;font-variant-numeric:tabular-nums" id="oxyTimer">00</div>
+        <div style="font-size:13px;color:var(--muted2);margin-top:4px" id="oxyInstruction">—</div>
+      </div>
+
+      <!-- визуальное кольцо дыхания -->
+      <div style="display:flex;justify-content:center;margin-bottom:16px">
+        <div id="oxyRing" style="width:100px;height:100px;border-radius:50%;border:3px solid var(--border);display:flex;align-items:center;justify-content:center;transition:all 0.5s;position:relative">
+          <div style="font-size:28px" id="oxyEmoji">🫁</div>
+          <svg style="position:absolute;top:-3px;left:-3px;width:106px;height:106px;transform:rotate(-90deg)">
+            <circle id="oxyArc" cx="53" cy="53" r="50" fill="none" stroke="var(--primary)" stroke-width="3" stroke-dasharray="314" stroke-dashoffset="314" style="transition:stroke-dashoffset 0.3s"/>
+          </svg>
+        </div>
+      </div>
+
+      <div style="text-align:center;margin-bottom:12px">
+        <span style="font-size:12px;color:var(--muted)">Раунд </span>
+        <span style="font-size:14px;font-weight:700;color:var(--text)" id="oxyRound">1/3</span>
+        <span style="font-size:12px;color:var(--muted);margin-left:12px">Дыхание </span>
+        <span style="font-size:14px;font-weight:700;color:var(--green)" id="oxyBreathCount">—</span>
+      </div>
+
+      <!-- прогресс раунда -->
+      <div class="prog-bar" style="margin-bottom:14px"><div class="prog-fill" id="oxyProgressBar" style="width:0%;background:linear-gradient(to right,var(--primary),var(--green))"></div></div>
+
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button class="btn btn-primary" id="oxyStartBtn" onclick="oxyStart()">▶ Начать</button>
+        <button class="btn" style="background:var(--border);color:var(--text)" onclick="oxyStop()">⏹ Стоп</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SpO2 TRACKER -->
+  <div class="card">
+    <div class="card-title">📊 Трекер SpO₂ и сессий</div>
+    <p style="font-size:12px;color:var(--muted2);margin-bottom:14px">Измерьте SpO₂ пульсоксиметром до и после сессии. Оптимум: 97–99%.</p>
+    <div style="display:flex;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+      <div style="flex:1;min-width:100px"><label>SpO₂ до (%)</label><input type="number" id="spo2Before" min="85" max="100" placeholder="напр. 96"></div>
+      <div style="flex:1;min-width:100px"><label>SpO₂ после (%)</label><input type="number" id="spo2After" min="85" max="100" placeholder="напр. 99"></div>
+      <div style="flex:1;min-width:120px"><label>Протокол</label>
+        <select id="spo2Protocol">
+          <option value="wimhof">Вим Хоф</option>
+          <option value="deep">Диафрагмальное</option>
+          <option value="turbo">Турбо</option>
+          <option value="concentrator">Концентратор</option>
+          <option value="hbo">ГБО</option>
+        </select>
+      </div>
+      <div style="display:flex;align-items:flex-end"><button class="btn btn-primary" onclick="logSpo2()">Сохранить</button></div>
+    </div>
+    <div id="spo2Log" style="display:flex;flex-direction:column;gap:6px"></div>
+    <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap">
+      <div style="flex:1;text-align:center;padding:10px;background:var(--card2);border-radius:10px">
+        <div style="font-size:20px;font-weight:900;color:var(--primary)" id="spo2Sessions">0</div>
+        <div style="font-size:11px;color:var(--muted)">сессий всего</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:10px;background:var(--card2);border-radius:10px">
+        <div style="font-size:20px;font-weight:900;color:var(--green)" id="spo2AvgGain">—</div>
+        <div style="font-size:11px;color:var(--muted)">ср. прирост SpO₂</div>
+      </div>
+      <div style="flex:1;text-align:center;padding:10px;background:var(--card2);border-radius:10px">
+        <div style="font-size:20px;font-weight:900;color:var(--yellow)" id="spo2LastVal">—</div>
+        <div style="font-size:11px;color:var(--muted)">последний SpO₂</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONTRAINDICATIONS -->
+  <div class="card" style="border-color:rgba(255,71,87,.2)">
+    <div class="card-title">⛔ Противопоказания и меры предосторожности</div>
+    <div style="font-size:13px;line-height:1.9;color:var(--muted2)">
+      🔴 <strong>Абсолютные противопоказания:</strong> нелеченный пневмоторакс, эпилепсия, клаустрофобия (для ГБО), острые ОРВИ с высокой температурой<br>
+      🟡 <strong>С осторожностью:</strong> бронхиальная астма, гипертония 3 ст., беременность, сердечная недостаточность<br>
+      🟡 <strong>Дыхательные протоколы:</strong> никогда в воде, за рулём, стоя над высотой<br>
+      🔵 <strong>При гипервентиляции:</strong> покалывание в руках, лёгкое головокружение — норма. Боль в груди — стоп<br>
+      ✅ <strong>Рекомендуется:</strong> пульсоксиметр для мониторинга SpO₂ и ЧСС во время и после сессии
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════ CHECKLIST -->
+<div class="tab" id="tab-checklist">
+
+  <div class="card">
+    <div class="card-title">✅ Ежедневный биохакинг-чеклист</div>
+    <div style="display:flex;gap:10px;margin-bottom:16px">
+      <div style="text-align:center;flex:1;padding:10px;background:var(--card2);border-radius:10px">
+        <div style="font-size:22px;font-weight:900;color:var(--green)" id="doneCount">0</div>
+        <div style="font-size:11px;color:var(--muted)">выполнено</div>
+      </div>
+      <div style="text-align:center;flex:1;padding:10px;background:var(--card2);border-radius:10px">
+        <div style="font-size:22px;font-weight:900;color:var(--primary)" id="totalCount">0</div>
+        <div style="font-size:11px;color:var(--muted)">всего</div>
+      </div>
+      <div style="text-align:center;flex:1;padding:10px;background:var(--card2);border-radius:10px">
+        <div style="font-size:22px;font-weight:900;color:var(--yellow)" id="pctCount">0%</div>
+        <div style="font-size:11px;color:var(--muted)">прогресс</div>
+      </div>
+    </div>
+    <div class="prog-bar"><div class="prog-fill" id="checkProgress" style="width:0%;background:linear-gradient(to right,var(--primary),var(--green))"></div></div>
+  </div>
+
+  <div class="section-label">🌅 Утро</div>
+  <div class="card" id="checklist-morning"></div>
+
+  <div class="section-label">☀️ День</div>
+  <div class="card" id="checklist-day"></div>
+
+  <div class="section-label">🌙 Вечер</div>
+  <div class="card" id="checklist-evening"></div>
+
+  <div style="display:flex;gap:10px;margin-top:8px">
+    <button class="btn btn-green" style="flex:1" onclick="resetChecklist()">Сбросить день</button>
+    <button class="btn btn-purple" style="flex:1" onclick="saveChecklistStreak()">Сохранить стрик</button>
+  </div>
+  <div style="text-align:center;margin-top:12px;font-size:13px;color:var(--muted2)">
+    Текущий стрик: <strong style="color:var(--yellow)" id="streakDisplay">0 дней</strong>
+  </div>
+</div>
+
+</main>
+
+<div class="toast" id="toast">✓</div>
+
+<script>
+// ─── STATE ────────────────────────────────────────────────────────────────────
+let S = JSON.parse(localStorage.getItem('biohack_v2') || '{}');
+if(!S.checks) S.checks = {};
+if(!S.streak) S.streak = 0;
+if(!S.lastDay) S.lastDay = '';
+function save(){ localStorage.setItem('biohack_v2', JSON.stringify(S)); }
+
+// ─── TABS ─────────────────────────────────────────────────────────────────────
+function showTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  const tabs = ['protocol','labs','supps','food','workout','procedures','checklist'];
+  const idx = tabs.indexOf(name);
+  document.querySelectorAll('nav button')[idx].classList.add('active');
+}
+
+// ─── ACCORDION ────────────────────────────────────────────────────────────────
+function toggleAcc(header){
+  const body = header.nextElementSibling;
+  const arrow = header.querySelector('.acc-arrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
+
+// ─── LABS ANALYZER ────────────────────────────────────────────────────────────
+const MARKERS = {
+  vitd:  { name:'Витамин D', unit:'нг/мл',   opt:[60,80],  low:[30,60],  high:[100,999], lowMsg:'Дефицит витамина D', highMsg:'Токсичный уровень' },
+  b12:   { name:'Витамин B12', unit:'пг/мл', opt:[600,1000], low:[0,600], high:[1200,9999], lowMsg:'Низкий B12', highMsg:'Высокий B12 (возможны проблемы с абсорбцией)' },
+  folat: { name:'Фолат', unit:'нг/мл',       opt:[10,20],  low:[0,10],   high:[25,999], lowMsg:'Низкий фолат', highMsg:'Высокий фолат' },
+  ferr:  { name:'Ферритин', unit:'нг/мл',    opt:[80,150], low:[0,80],   high:[200,9999], lowMsg:'Низкий ферритин', highMsg:'Высокий ферритин — возможен гемохроматоз' },
+  mg:    { name:'Магний', unit:'ммоль/л',     opt:[0.9,1.1], low:[0,0.9], high:[1.2,99], lowMsg:'Дефицит магния', highMsg:'Высокий магний' },
+  zn:    { name:'Цинк', unit:'мкмоль/л',     opt:[14,18],  low:[0,14],   high:[22,999], lowMsg:'Дефицит цинка', highMsg:'Высокий цинк' },
+  gluc:  { name:'Глюкоза', unit:'ммоль/л',   opt:[3.9,5.0], low:[0,3.9], high:[5.6,99], lowMsg:'Гипогликемия', highMsg:'Нарушение гликемии — риск диабета' },
+  ins:   { name:'Инсулин', unit:'мкЕд/мл',   opt:[2,6],    low:[0,2],    high:[8,999], lowMsg:'Низкий инсулин', highMsg:'Гиперинсулинизм — инсулинорезистентность' },
+  hba1c: { name:'HbA1c', unit:'%',           opt:[4.6,5.3], low:[0,4.6], high:[5.7,99], lowMsg:'Низкий HbA1c', highMsg:'Преддиабет/диабет' },
+  crp:   { name:'hsCRP', unit:'мг/л',        opt:[0,0.5],  low:null,     high:[1,999], lowMsg:null, highMsg:'Хроническое воспаление' },
+  hcy:   { name:'Гомоцистеин', unit:'мкмоль/л', opt:[0,7], low:null,    high:[9,999], lowMsg:null, highMsg:'Гипергомоцистеинемия — кардиориск, дефицит B9/B12/B6' },
+  tsh:   { name:'ТТГ', unit:'мкМЕ/мл',      opt:[1,2],    low:[0,1],    high:[2.5,99], lowMsg:'Низкий ТТГ (гипертиреоз?)', highMsg:'Субклинический гипотиреоз' },
+  t4:    { name:'Свободный Т4', unit:'пмоль/л', opt:[14,20], low:[0,14], high:[22,99], lowMsg:'Низкий Т4', highMsg:'Высокий Т4' },
+  cort:  { name:'Кортизол (утро)', unit:'нмоль/л', opt:[300,500], low:[0,300], high:[600,9999], lowMsg:'Надпочечниковая недостаточность?', highMsg:'Хронический стресс, гиперкортизолизм' },
+  ldl:   { name:'ЛПНП', unit:'ммоль/л',     opt:[1.5,2.8], low:null,    high:[3.0,99], lowMsg:null, highMsg:'Высокий ЛПНП' },
+  tg:    { name:'Триглицериды', unit:'ммоль/л', opt:[0,1.1], low:null,  high:[1.5,99], lowMsg:null, highMsg:'Гипертриглицеридемия — инсулинорезистентность, алкоголь' },
+};
+
+const RECS = {
+  vitd_low:  { title:'☀️ Коррекция Витамина D', items:['D3 5000–10000 МЕ/день с жирами + K2 (МК-7) 200 мкг','Через 3 месяца — повторный анализ. Цель: 60–80 нг/мл','Солнечное воздействие: 20–30 мин в полдень (тело без одежды)','Магний необходим для конверсии D3 — убедитесь в достаточном уровне'] },
+  b12_low:   { title:'🔵 Коррекция B12', items:['Метилкобаламин (не цианокобаламин!) 1000–5000 мкг/день под язык','Исключить дефицит внутреннего фактора (анализ на антитела)','Животный белок: печень, рыба, яйца — ежедневно','При МТГФР-мутации — исключительно активные формы B-витаминов'] },
+  folat_low: { title:'🌿 Коррекция Фолата', items:['Метилфолат (5-MTHF) 400–800 мкг/день (не фолиевая кислота)','Сдать анализ на MTHFR-полиморфизм','Листовая зелень (шпинат, руккола, петрушка) ежедневно','Фолат + B12 вместе для снижения гомоцистеина'] },
+  ferr_low:  { title:'🩸 Коррекция Ферритина', items:['Бисглицинат железа 50–100 мг с Витамином С (500 мг) — натощак','Не вместе с кофе, чаем, молочными продуктами, кальцием','Красное мясо (травяной откорм), субпродукты 3–4 раза/нед','Исключить кровотечения, воспаление, целиакию как причины'] },
+  mg_low:    { title:'⚡ Коррекция Магния', items:['Магний глицинат 400–600 мг вечером (сон, стресс)','Магний малат 400 мг утром (энергия, мышцы)','Магний треонат — если нужна когнитивная поддержка','Источники: тыквенные семечки, орехи, листовая зелень, авокадо'] },
+  zn_low:    { title:'🦪 Коррекция Цинка', items:['Цинк пиколинат или бисглицинат 25–50 мг/день с едой','Не вместе с железом и кальцием (конкурентное всасывание)','Устрицы — лучший источник. Тыквенные семечки, говядина','Через 2 месяца — контроль. Не превышать 50 мг/день > 4 нед'] },
+  ins_high:  { title:'🍬 Инсулинорезистентность — протокол', items:['Берберин 500 мг ×2–3 раза в день с едой','ИФ 16:8 — ограничение окна питания, начало с 12:00','Исключить простые углеводы и жидкие калории полностью','Зона 2 кардио 150 мин/нед — лучший способ улучшить чувствительность','ALA 600 мг + хром 200 мкг + магний (вместе улучшают гликемию)'] },
+  crp_high:  { title:'🔥 Снижение воспаления', items:['Омега-3 4 г EPA+DHA/день — мощный противовоспалительный','Куркумин 1000 мг + пиперин. Курс 3 месяца','Исключить провоспалительные масла (подсолнечное, кукурузное)','Противовоспалительная диета: ягоды, жирная рыба, зелень, оливковое масло','Нормализовать сон: каждые 1% нарушения сна = +10% воспаления'] },
+  hcy_high:  { title:'🧬 Снижение Гомоцистеина', items:['Метилфолат 800–1000 мкг + Метилкобаламин 1000 мкг ежедневно','B6 в форме P5P (пиридоксаль-5-фосфат) 25–50 мг','Бетаин (ТМГ) 1–2 г/день — донор метильных групп','Исключить алкоголь — он блокирует фолатный метаболизм','Проверить MTHFR: если C677T — нужны исключительно метилированные формы'] },
+  tsh_high:  { title:'🦋 Поддержка щитовидной железы', items:['Исключить дефицит йода и селена (Se-метионин 200 мкг)','Витамин D + Омега-3 снижают аутоиммунное воспаление (Хашимото)','Магний критичен для конверсии Т4→Т3','Исключить глютен при Хашимото (молекулярная мимикрия)','Цинк 25–30 мг — кофактор дейодиназ (ферменты конверсии)'] },
+  cort_high: { title:'😤 Снижение Кортизола', items:['Ашваганда KSM-66 600 мг вечером — снижает кортизол до 30%','Фосфатидилсерин 400–800 мг/день — прямой блокатор кортизола','Адаптогены: Родиола (утром), Ашваганда (вечером)','Оптимизировать сон — главный источник хронического кортизола','Ограничить кофеин до 1–2 ч дня. Не ранее 90 мин после пробуждения'] },
+  ldl_high:  { title:'❤️ Снижение ЛПНП', items:['Омега-3 4 г EPA+DHA (снижает ТГ, VLDL)','Растворимая клетчатка: псиллиум 10–15 г/день с водой','Красный дрожжевой рис (содержит монаколин К) — при согласовании с врачом','Берберин 500 мг ×2 — снижает ЛПНП через PCSK9','Важнее отношение ТГ/ЛПВП (<2), чем абсолютный ЛПНП'] },
+  tg_high:   { title:'🔶 Снижение Триглицеридов', items:['ИФ 16:8 — ключевое вмешательство. ТГ отражают переедание углеводов','Омега-3 4 г EPA+DHA снижают ТГ на 20–30%','Исключить алкоголь, фруктозу, жидкие калории','Упражнения Зоны 2 150+ мин/нед','Берберин 500 мг ×2 с едой'] },
+};
+
+function analyzeMarker(id, val){
+  const m = MARKERS[id];
+  if(!m || val === '' || val === null) return;
+  const el = document.getElementById('s_'+id);
+  if(!el) return;
+  const v = parseFloat(val);
+  if(isNaN(v)) return;
+
+  if(m.opt && v >= m.opt[0] && v <= m.opt[1]){
+    el.className='marker-status status-opt'; el.textContent='✓ Оптимум';
+  } else if(m.high && v >= m.high[0]){
+    el.className='marker-status status-high'; el.textContent='↑ Высокий';
+  } else if(m.low && v < m.low[1]){
+    el.className='marker-status status-low'; el.textContent='↓ Низкий';
+  } else {
+    el.className='marker-status status-border'; el.textContent='⚠ Погранично';
+  }
+}
+
+function analyzeAll(){
+  Object.keys(MARKERS).forEach(id=>{
+    const el = document.getElementById('m_'+id);
+    if(el) analyzeMarker(id, el.value);
+  });
+}
+
+function showLabRecs(){
+  const recs = [];
+  const addRec = (key) => { if(RECS[key]) recs.push(RECS[key]); };
+
+  const get = id => { const el=document.getElementById('m_'+id); return el&&el.value?parseFloat(el.value):null; };
+
+  const vd=get('vitd'), b12=get('b12'), fol=get('folat'), fer=get('ferr'), mg=get('mg'), zn=get('zn');
+  const gluc=get('gluc'), ins=get('ins'), crp=get('crp'), hcy=get('hcy'), tsh=get('tsh'), cort=get('cort');
+  const ldl=get('ldl'), tg=get('tg');
+
+  if(vd!==null && vd<60) addRec('vitd_low');
+  if(b12!==null && b12<600) addRec('b12_low');
+  if(fol!==null && fol<10) addRec('folat_low');
+  if(fer!==null && fer<80) addRec('ferr_low');
+  if(mg!==null && mg<0.9) addRec('mg_low');
+  if(zn!==null && zn<14) addRec('zn_low');
+  if(ins!==null && ins>7) addRec('ins_high');
+  if(crp!==null && crp>1) addRec('crp_high');
+  if(hcy!==null && hcy>9) addRec('hcy_high');
+  if(tsh!==null && tsh>2.5) addRec('tsh_high');
+  if(cort!==null && cort>550) addRec('cort_high');
+  if(ldl!==null && ldl>3.0) addRec('ldl_high');
+  if(tg!==null && tg>1.5) addRec('tg_high');
+
+  const div = document.getElementById('labRecs');
+  div.style.display='block';
+
+  // Score
+  const total = Object.keys(MARKERS).filter(id=>{const el=document.getElementById('m_'+id);return el&&el.value}).length;
+  const optimal = Object.keys(MARKERS).filter(id=>{
+    const el=document.getElementById('m_'+id); if(!el||!el.value) return false;
+    const m=MARKERS[id]; const v=parseFloat(el.value);
+    return m.opt && v>=m.opt[0] && v<=m.opt[1];
+  }).length;
+  const score = total>0 ? Math.round(optimal/total*100) : null;
+  if(score!==null) document.getElementById('scoreNum').textContent = score+'%';
+
+  if(!recs.length){
+    div.innerHTML=`<div class="rec-card" style="border-color:rgba(0,255,136,.3);background:rgba(0,255,136,.05)">
+      <div class="rec-title" style="color:var(--green)">🎉 Все введённые показатели в оптимальном диапазоне!</div>
+      <div class="rec-item">Продолжайте поддерживающий протокол добавок</div>
+      <div class="rec-item">Контрольные анализы каждые 3–6 месяцев</div>
+    </div>`;
+    return;
+  }
+
+  div.innerHTML = `<div style="font-size:14px;font-weight:700;margin-bottom:10px;color:var(--text)">📋 Персональные рекомендации (${recs.length} зоны внимания)</div>` +
+    recs.map(r=>`<div class="rec-card">
+      <div class="rec-title">${r.title}</div>
+      ${r.items.map(i=>`<div class="rec-item">${i}</div>`).join('')}
+    </div>`).join('');
+  toast('📊 Рекомендации готовы!');
+}
+
+// ─── ZONE 2 CALC ──────────────────────────────────────────────────────────────
+function calcZone2(){
+  const age = parseInt(document.getElementById('ageInput').value);
+  if(!age||age<15||age>90){ toast('⚠️ Введите возраст'); return; }
+  const max = 220 - age;
+  const z2lo = Math.round(max*0.6);
+  const z2hi = Math.round(max*0.75);
+  const z5lo = Math.round(max*0.9);
+  const r = document.getElementById('zone2Result');
+  r.style.display='block';
+  r.innerHTML=`<strong>ЧСС макс:</strong> ~${max} уд/мин<br>
+    <strong style="color:var(--green)">Зона 2 (жиросжигание):</strong> ${z2lo}–${z2hi} уд/мин<br>
+    <strong style="color:var(--yellow)">Зона 4 (порог):</strong> ${Math.round(max*0.8)}–${Math.round(max*0.89)} уд/мин<br>
+    <strong style="color:var(--red)">Зона 5 (VO2 max):</strong> ${z5lo}+ уд/мин`;
+}
+
+// ─── TIMER ────────────────────────────────────────────────────────────────────
+let timerInt = null;
+function startTimer(type, secs){
+  clearInterval(timerInt);
+  let rem = secs;
+  const id = type==='cold'?'coldTimer':'breathTimer';
+  const update = ()=>{
+    const m=Math.floor(rem/60), s=rem%60;
+    document.getElementById(id).textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    if(rem<=0){ clearInterval(timerInt); toast(type==='cold'?'❄️ Молодец! Холодный душ завершён!':'💨 Дыхательная практика завершена!'); return; }
+    rem--;
+  };
+  update();
+  timerInt = setInterval(update, 1000);
+}
+function stopTimer(){ clearInterval(timerInt); }
+
+// ─── CHECKLIST ────────────────────────────────────────────────────────────────
+const CHECKS = {
+  morning:[
+    {id:'c_light', text:'<strong>Световой сигнал</strong> — 5–10 мин на улице или у окна'},
+    {id:'c_water', text:'<strong>Гидратация</strong> — 500 мл воды + соль + лимон'},
+    {id:'c_cold',  text:'<strong>Холодный душ</strong> — 2 мин'},
+    {id:'c_breath',text:'<strong>Дыхание</strong> — физ. вздох или 4-7-8 (5 мин)'},
+    {id:'c_suppm', text:'<strong>Утренние добавки</strong> — D3, K2, Омега-3, NMN'},
+    {id:'c_nomob', text:'<strong>Без телефона</strong> первые 30 мин после пробуждения'},
+  ],
+  day:[
+    {id:'c_coffee', text:'<strong>Кофе</strong> — не раньше 90 мин после подъёма'},
+    {id:'c_walk',   text:'<strong>Прогулка 10 мин</strong> после обеда (снижает сахар)'},
+    {id:'c_z2',     text:'<strong>Зона 2 кардио</strong> ≥ 30 мин (или силовая)'},
+    {id:'c_protein',text:'<strong>Белок</strong> в каждый приём пищи — 30+ г'},
+    {id:'c_hydrate',text:'<strong>2 л воды</strong> суммарно за день'},
+    {id:'c_nsdr',   text:'<strong>NSDR / Нет-стресс отдых</strong> — 10–20 мин'},
+  ],
+  evening:[
+    {id:'c_nofood', text:'<strong>Последний приём</strong> — не позже 20:00'},
+    {id:'c_suppe',  text:'<strong>Вечерние добавки</strong> — Магний, Ашваганда'},
+    {id:'c_dimlight',text:'<strong>Тёплый свет</strong> — убрать яркое освещение'},
+    {id:'c_noscreen',text:'<strong>Экраны</strong> убрать за 1 ч до сна / очки синего света'},
+    {id:'c_cool',   text:'<strong>Температура</strong> в спальне 18–20°C'},
+    {id:'c_sleep',  text:'<strong>В постели</strong> в одно и то же время'},
+  ],
+};
+
+function renderChecklist(){
+  ['morning','day','evening'].forEach(period=>{
+    const container = document.getElementById('checklist-'+period);
+    container.innerHTML = CHECKS[period].map(c=>`
+      <div class="check-item">
+        <div class="chk ${S.checks[c.id]?'on':''}" onclick="toggleCheck('${c.id}',this)"></div>
+        <div class="check-text">${c.text}</div>
+      </div>`).join('');
+  });
+  updateCheckProgress();
+}
+
+function toggleCheck(id, el){
+  S.checks[id] = !S.checks[id];
+  el.classList.toggle('on');
+  save();
+  updateCheckProgress();
+  if(S.checks[id]) toast('✅ Выполнено!');
+}
+
+function updateCheckProgress(){
+  const all = Object.values(CHECKS).flat();
+  const total = all.length;
+  const done = all.filter(c=>S.checks[c.id]).length;
+  document.getElementById('doneCount').textContent = done;
+  document.getElementById('totalCount').textContent = total;
+  document.getElementById('pctCount').textContent = Math.round(done/total*100)+'%';
+  document.getElementById('checkProgress').style.width = (done/total*100)+'%';
+  if(done>=total) toast('🎉 Всё выполнено! Идеальный день!');
+}
+
+function resetChecklist(){
+  S.checks = {};
+  save();
+  renderChecklist();
+  toast('🔄 Чеклист сброшен');
+}
+
+function saveChecklistStreak(){
+  const today = new Date().toISOString().split('T')[0];
+  if(S.lastDay === today){ toast('Стрик уже сохранён сегодня'); return; }
+  const all = Object.values(CHECKS).flat();
+  const done = all.filter(c=>S.checks[c.id]).length;
+  if(done < all.length*0.7){ toast('Выполните минимум 70% пунктов'); return; }
+  S.streak = (S.streak||0)+1;
+  S.lastDay = today;
+  save();
+  document.getElementById('streakDisplay').textContent = S.streak+' дней';
+  toast('🔥 Стрик: '+S.streak+' дней!');
+}
+
+// ─── TOAST ────────────────────────────────────────────────────────────────────
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+// ─── HYPEROXY ─────────────────────────────────────────────────────────────────
+const OXY_PROTOCOLS = {
+  wimhof: {
+    name: 'Вим Хоф',
+    rounds: 3,
+    phases: [
+      { name:'💨 Гипервентиляция', instruction:'Мощные глубокие вдохи через рот — активно вдох, пассивно выдох', duration:40, breaths:40, type:'breathe', color:'var(--primary)' },
+      { name:'🤫 Задержка без воздуха', instruction:'Выдохните и задержите дыхание. Расслабьтесь полностью', duration:90, breaths:null, type:'hold-out', color:'var(--purple)' },
+      { name:'🌬️ Финальный вдох + задержка', instruction:'Глубокий вдох — задержите на 15 секунд', duration:15, breaths:null, type:'hold-in', color:'var(--green)' },
+      { name:'😮‍💨 Восстановление', instruction:'Дышите нормально', duration:20, breaths:null, type:'rest', color:'var(--muted)' },
+    ],
+  },
+  deep: {
+    name: 'Диафрагмальное',
+    rounds: 1,
+    phases: [
+      { name:'🌬️ Медленный вдох животом', instruction:'Вдох через нос 6 сек — живот расширяется', duration:6, breaths:null, type:'inhale', color:'var(--primary)' },
+      { name:'⏸ Задержка', instruction:'Задержите дыхание 3 сек', duration:3, breaths:null, type:'hold-in', color:'var(--yellow)' },
+      { name:'💨 Медленный выдох (PEEP)', instruction:'Выдох через сжатые губы 8 сек — тихое шипение', duration:8, breaths:null, type:'exhale', color:'var(--green)' },
+      { name:'⏸ Пауза', instruction:'Пауза 2 сек', duration:2, breaths:null, type:'rest', color:'var(--muted)' },
+    ],
+    repeatCycles: 30,
+  },
+  turbo: {
+    name: 'Турбо',
+    rounds: 3,
+    phases: [
+      { name:'⚡ Быстрое дыхание', instruction:'20 быстрых полных вдохов-выдохов', duration:20, breaths:20, type:'breathe', color:'var(--orange)' },
+      { name:'😮‍💨 Нормальное дыхание', instruction:'Дышите спокойно', duration:60, breaths:null, type:'rest', color:'var(--muted)' },
+    ],
+  },
+};
+
+let oxyProto = null, oxyRunning = false, oxyInterval = null;
+let oxyRoundIdx = 0, oxyPhaseIdx = 0, oxySecsLeft = 0, oxyTotalSecs = 0, oxyBreathsLeft = 0;
+
+function selectOxyProtocol(key){
+  oxyProto = key;
+  document.getElementById('oxyDisplay').style.display = 'block';
+  const p = OXY_PROTOCOLS[key];
+  document.getElementById('oxyRound').textContent = '1/'+p.rounds;
+  document.getElementById('oxyPhaseName').textContent = p.phases[0].name;
+  document.getElementById('oxyInstruction').textContent = p.phases[0].instruction;
+  document.getElementById('oxyTimer').textContent = String(p.phases[0].duration).padStart(2,'0');
+  document.getElementById('oxyBreathCount').textContent = p.phases[0].breaths || '—';
+  document.getElementById('oxyRing').style.borderColor = 'var(--border)';
+  document.getElementById('oxyArc').style.stroke = 'var(--primary)';
+  setOxyRingAnim('idle');
+  toast('Протокол «'+p.name+'» выбран. Сядьте удобно и нажмите Начать.');
+}
+
+function setOxyRingAnim(type){
+  const ring = document.getElementById('oxyRing');
+  const emoji = document.getElementById('oxyEmoji');
+  if(type==='breathe'||type==='inhale'){ ring.style.transform='scale(1.15)'; emoji.textContent='🫁'; }
+  else if(type==='exhale'){ ring.style.transform='scale(0.9)'; emoji.textContent='💨'; }
+  else if(type==='hold-out'||type==='hold-in'){ ring.style.transform='scale(1)'; emoji.textContent='🤫'; }
+  else { ring.style.transform='scale(1)'; emoji.textContent='😮‍💨'; }
+}
+
+function oxyStart(){
+  if(!oxyProto){ toast('Сначала выберите протокол'); return; }
+  oxyStop();
+  oxyRunning = true;
+  oxyRoundIdx = 0; oxyPhaseIdx = 0;
+  const proto = OXY_PROTOCOLS[oxyProto];
+  runOxyPhase(proto);
+  document.getElementById('oxyStartBtn').textContent = '⏸ Пауза';
+  document.getElementById('oxyStartBtn').onclick = oxyPause;
+}
+
+function runOxyPhase(proto){
+  const phase = proto.phases[oxyPhaseIdx];
+  oxySecsLeft = phase.duration;
+  oxyTotalSecs = phase.duration;
+  oxyBreathsLeft = phase.breaths || null;
+
+  document.getElementById('oxyPhaseName').textContent = phase.name;
+  document.getElementById('oxyInstruction').textContent = phase.instruction;
+  document.getElementById('oxyTimer').textContent = String(oxySecsLeft).padStart(2,'0');
+  document.getElementById('oxyBreathCount').textContent = oxyBreathsLeft || '—';
+  document.getElementById('oxyRound').textContent = (oxyRoundIdx+1)+'/'+proto.rounds;
+  document.getElementById('oxyArc').style.stroke = phase.color;
+  document.getElementById('oxyRing').style.borderColor = phase.color;
+  setOxyRingAnim(phase.type);
+  document.getElementById('oxyProgressBar').style.width = '0%';
+
+  clearInterval(oxyInterval);
+  let elapsed = 0;
+  let breathCycle = oxyBreathsLeft ? Math.floor(phase.duration / oxyBreathsLeft) : null;
+  let lastBreathSec = 0;
+
+  oxyInterval = setInterval(()=>{
+    if(!oxyRunning) return;
+    elapsed++;
+    oxySecsLeft = Math.max(0, oxyTotalSecs - elapsed);
+    document.getElementById('oxyTimer').textContent = String(oxySecsLeft).padStart(2,'0');
+    document.getElementById('oxyProgressBar').style.width = (elapsed/oxyTotalSecs*100)+'%';
+
+    // breath counter
+    if(breathCycle && oxyBreathsLeft > 0 && elapsed > lastBreathSec && (elapsed - lastBreathSec) >= breathCycle){
+      oxyBreathsLeft--;
+      lastBreathSec = elapsed;
+      document.getElementById('oxyBreathCount').textContent = oxyBreathsLeft;
+      // pulse ring
+      const ring = document.getElementById('oxyRing');
+      ring.style.transform = ring.style.transform === 'scale(1.15)' ? 'scale(0.95)' : 'scale(1.15)';
+    }
+
+    // arc
+    const pct = elapsed/oxyTotalSecs;
+    document.getElementById('oxyArc').style.strokeDashoffset = 314 - (314*pct);
+
+    if(oxySecsLeft <= 0){
+      oxyPhaseIdx++;
+      if(oxyPhaseIdx >= proto.phases.length){
+        oxyPhaseIdx = 0;
+        oxyRoundIdx++;
+        if(oxyRoundIdx >= proto.rounds){
+          // DONE
+          clearInterval(oxyInterval);
+          oxyRunning = false;
+          document.getElementById('oxyPhaseName').textContent = '✅ Сессия завершена!';
+          document.getElementById('oxyInstruction').textContent = 'Отдыхайте и наслаждайтесь ощущением';
+          document.getElementById('oxyTimer').textContent = '00';
+          document.getElementById('oxyProgressBar').style.width = '100%';
+          setOxyRingAnim('rest');
+          document.getElementById('oxyStartBtn').textContent = '▶ Начать';
+          document.getElementById('oxyStartBtn').onclick = oxyStart;
+          toast('🫁 Отличная работа! Сессия завершена. Измерьте SpO₂!');
+          S.oxyCount = (S.oxyCount||0)+1; save();
+          refreshSpo2Stats();
+          return;
+        }
+      }
+      clearInterval(oxyInterval);
+      runOxyPhase(proto);
+    }
+  }, 1000);
+}
+
+function oxyPause(){
+  oxyRunning = false;
+  document.getElementById('oxyStartBtn').textContent = '▶ Продолжить';
+  document.getElementById('oxyStartBtn').onclick = oxyResume;
+}
+function oxyResume(){ oxyRunning = true; document.getElementById('oxyStartBtn').textContent = '⏸ Пауза'; document.getElementById('oxyStartBtn').onclick = oxyPause; }
+function oxyStop(){ clearInterval(oxyInterval); oxyRunning = false; document.getElementById('oxyStartBtn').textContent = '▶ Начать'; document.getElementById('oxyStartBtn').onclick = oxyStart; }
+
+// ─── SPO2 LOG ─────────────────────────────────────────────────────────────────
+if(!S.spo2Log) S.spo2Log = [];
+
+function logSpo2(){
+  const before = parseFloat(document.getElementById('spo2Before').value);
+  const after = parseFloat(document.getElementById('spo2After').value);
+  const proto = document.getElementById('spo2Protocol').value;
+  if(!after||after<85||after>100){ toast('⚠️ Введите корректный SpO₂'); return; }
+  const date = new Date().toLocaleDateString('ru-RU');
+  S.spo2Log.unshift({ date, before: before||null, after, proto });
+  if(S.spo2Log.length>20) S.spo2Log.pop();
+  save(); renderSpo2Log(); toast('📊 SpO₂ сохранён: '+after+'%');
+}
+
+const protoNames = { wimhof:'Вим Хоф', deep:'Диафрагм.', turbo:'Турбо', concentrator:'Концентратор', hbo:'ГБО' };
+
+function renderSpo2Log(){
+  const el = document.getElementById('spo2Log');
+  if(!S.spo2Log.length){ el.innerHTML='<p style="color:var(--muted);font-size:13px;text-align:center">Записей пока нет</p>'; return; }
+  el.innerHTML = S.spo2Log.slice(0,6).map(e=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 10px;background:rgba(255,255,255,.03);border-radius:8px;font-size:13px">
+      <span style="color:var(--muted)">${e.date}</span>
+      <span style="color:var(--muted2)">${protoNames[e.proto]||e.proto}</span>
+      <span>${e.before?'<span style="color:var(--muted)">'+e.before+'%</span> → ':''}<strong style="color:var(--green)">${e.after}%</strong></span>
+    </div>`).join('');
+  refreshSpo2Stats();
+}
+
+function refreshSpo2Stats(){
+  const logs = S.spo2Log;
+  document.getElementById('spo2Sessions').textContent = (S.oxyCount||0) + logs.length;
+  if(logs.length){
+    document.getElementById('spo2LastVal').textContent = logs[0].after+'%';
+    const gains = logs.filter(l=>l.before).map(l=>l.after-l.before);
+    if(gains.length) document.getElementById('spo2AvgGain').textContent = '+' + (gains.reduce((a,b)=>a+b,0)/gains.length).toFixed(1)+'%';
+  }
+}
+
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+renderChecklist();
+renderSpo2Log();
+document.getElementById('streakDisplay').textContent = (S.streak||0)+' дней';
+</script>
+</body>
+</html>
